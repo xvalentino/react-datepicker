@@ -18,11 +18,31 @@ function App() {
       if (endDate && endDate < date) {
         setEndDate(null);
       }
+      // If end date is blank, focus and open end date picker
+      if (!endDate) {
+        // First close the start picker
+        setOpenState({ start: false, end: false });
+        // Then after a small delay, open the end picker
+        setTimeout(() => {
+          setOpenState({ start: false, end: true });
+          endDateInputRef.current?.focus();
+        }, 100);
+      }
     } else if (inputType === 'end') {
       setEndDate(date);
       // If start date exists and is after new end date, clear it
       if (startDate && startDate > date) {
         setStartDate(null);
+      }
+      // If start date is blank, focus and open start date picker
+      if (!startDate) {
+        // First close the end picker
+        setOpenState({ start: false, end: false });
+        // Then after a small delay, open the start picker
+        setTimeout(() => {
+          setOpenState({ start: true, end: false });
+          startDateInputRef.current?.focus();
+        }, 100);
       }
     }
   };
