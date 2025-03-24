@@ -14,12 +14,19 @@ function App() {
 
     if (inputType === 'start') {
       setStartDate(date);
-      // If end date exists and is before new start date, clear it
+      // If end date exists and is before new start date, clear it and focus end date
       if (endDate && endDate < date) {
         setEndDate(null);
+        // First close the start picker
+        setOpenState({ start: false, end: false });
+        // Then after a small delay, open the end picker
+        setTimeout(() => {
+          setOpenState({ start: false, end: true });
+          endDateInputRef.current?.focus();
+        }, 100);
       }
       // If end date is blank, focus and open end date picker
-      if (!endDate) {
+      else if (!endDate) {
         // First close the start picker
         setOpenState({ start: false, end: false });
         // Then after a small delay, open the end picker
@@ -30,12 +37,19 @@ function App() {
       }
     } else if (inputType === 'end') {
       setEndDate(date);
-      // If start date exists and is after new end date, clear it
+      // If start date exists and is after new end date, clear it and focus start date
       if (startDate && startDate > date) {
         setStartDate(null);
+        // First close the end picker
+        setOpenState({ start: false, end: false });
+        // Then after a small delay, open the start picker
+        setTimeout(() => {
+          setOpenState({ start: true, end: false });
+          startDateInputRef.current?.focus();
+        }, 100);
       }
       // If start date is blank, focus and open start date picker
-      if (!startDate) {
+      else if (!startDate) {
         // First close the end picker
         setOpenState({ start: false, end: false });
         // Then after a small delay, open the start picker
@@ -65,6 +79,15 @@ function App() {
     }));
   };
 
+  const calendarContainerStyle = {
+    position: 'absolute',
+    zIndex: 1000,
+    backgroundColor: 'white',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    borderRadius: '4px',
+    padding: '8px',
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h1>Smart Range Date Picker</h1>
@@ -88,7 +111,7 @@ function App() {
             style={getInputStyle('start')}
           />
           {isOpen.start && (
-            <div style={{ position: 'absolute', zIndex: 1000 }}>
+            <div style={calendarContainerStyle}>
               <DatePicker
                 selected={startDate}
                 onChange={(date) => handleDateChange(date, 'start')}
@@ -97,7 +120,7 @@ function App() {
                 endDate={endDate}
                 dateFormat="MM/dd/yyyy"
                 open={isOpen.start}
-                monthsShown={1}
+                monthsShown={2}
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
@@ -126,17 +149,16 @@ function App() {
             style={getInputStyle('end')}
           />
           {isOpen.end && (
-            <div style={{ position: 'absolute', zIndex: 1000 }}>
+            <div style={calendarContainerStyle}>
               <DatePicker
                 selected={endDate}
                 onChange={(date) => handleDateChange(date, 'end')}
                 selectsEnd
                 startDate={startDate}
                 endDate={endDate}
-                minDate={startDate}
                 dateFormat="MM/dd/yyyy"
                 open={isOpen.end}
-                monthsShown={1}
+                monthsShown={2}
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
